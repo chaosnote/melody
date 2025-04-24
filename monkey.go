@@ -10,7 +10,7 @@ import (
 // Extend the current architecture to include external connection capabilities.
 
 type Monkey struct {
-	Melody
+	*Melody
 }
 
 func (m *Monkey) Dial(setting url.URL, keys map[string]any) error {
@@ -26,7 +26,7 @@ func (m *Monkey) Dial(setting url.URL, keys map[string]any) error {
 		conn:       conn,
 		output:     make(chan envelope, m.Config.MessageBufferSize),
 		outputDone: make(chan struct{}),
-		melody:     &m.Melody,
+		melody:     m.Melody,
 		open:       true,
 		rwmutex:    &sync.RWMutex{},
 	}
@@ -48,4 +48,10 @@ func (m *Monkey) Dial(setting url.URL, keys map[string]any) error {
 	m.disconnectHandler(session)
 
 	return nil
+}
+
+func NewMonkey() *Monkey {
+	return &Monkey{
+		Melody: New(),
+	}
 }
